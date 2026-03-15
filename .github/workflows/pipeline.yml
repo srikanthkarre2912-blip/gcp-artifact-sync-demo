@@ -15,46 +15,49 @@ jobs:
 
     steps:
 
+    # 1️⃣ Checkout repository
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # Set image variables
+    # 2️⃣ Define image variables
     - name: Set image variables
       run: |
         echo "IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV
         echo "IMAGE_REPO=asia-south1-docker.pkg.dev/practice-483609/dockerdemo1/httpd-demo" >> $GITHUB_ENV
 
-    # Authenticate to GCP
+    # 3️⃣ Authenticate to GCP
     - name: Authenticate to GCP
+      id: auth
       uses: google-github-actions/auth@v2
       with:
         credentials_json: ${{ secrets.GCP_SA_KEY }}
+        export_environment_variables: true
 
-    # Install gcloud
+    # 4️⃣ Install gcloud SDK
     - name: Setup gcloud
       uses: google-github-actions/setup-gcloud@v2
 
-    # Configure Docker for Artifact Registry
+    # 5️⃣ Configure Docker authentication for Artifact Registry
     - name: Configure Docker
       run: |
         gcloud auth configure-docker asia-south1-docker.pkg.dev --quiet
 
-    # Build Docker image
+    # 6️⃣ Build Docker image
     - name: Build Docker image
       run: |
         docker build -t $IMAGE_REPO:$IMAGE_TAG ./app
 
-    # Push Docker image
+    # 7️⃣ Push Docker image
     - name: Push Docker image
       run: |
         docker push $IMAGE_REPO:$IMAGE_TAG
 
-    # Update Helm values.yaml
+    # 8️⃣ Update Helm chart image tag
     - name: Update Helm values.yaml
       run: |
         sed -i "s/tag:.*/tag: \"$IMAGE_TAG\"/" helm/httpd/values.yaml
 
-    # Create Pull Request
+    # 9️⃣ Create Pull Request with updated Helm values
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v6
       with:
