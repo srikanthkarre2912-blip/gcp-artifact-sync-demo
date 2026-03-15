@@ -1,4 +1,4 @@
 image:
   repository: asia-south1-docker.pkg.dev/practice-483609/dockerdemo1/httpd-demo
-  tag: v1
+  tag: "35165c783041f95debe7761e0bc3e4bb74e39dad"
   pullPolicy: IfNotPresent
