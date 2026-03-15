@@ -1,0 +1,4 @@
+apiVersion: v2
+name: httpd
+description: A simple Apache web server chart
+version: 0.1.0
